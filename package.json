@@ -1,17 +1,25 @@
 {
   "name": "neo4j-browser",
   "version": "2.0.0-SNAPSHOT",
-  "dependencies": {},
+  "dependencies": {
+    "express": "^4.13.3"
+  },
+  "main": "./main.js",
   "engines": {
     "node": ">=0.10.2"
   },
   "scripts": {
-    "test": "grunt test"
+    "postinstall": "grunt build",
+    "test": "grunt test",
+    "start": "electron ."
   },
   "devDependencies": {
     "bower": "^1.4.1",
     "coffee-script": "^1.9.2",
     "connect-livereload": "^0.5.3",
+    "electron-packager": "^5.1.1",
+    "electron-prebuilt": "^0.35.1",
+    "express": "^4.13.3",
     "grunt": "^0.4.5",
     "grunt-bower-requirejs": "^2.0.0",
     "grunt-cli": "^0.1.13",
