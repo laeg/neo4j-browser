@@ -136,7 +136,7 @@ angular.module('neo4jApp')
             topic = topicalize(clean_url) or 'start'
             url = "content/guides/#{topic}.html"
           if is_remote and not host_ok
-            q.reject({page: url, contents: '', is_remote: is_remote, errors: [{code: "0", message: "Requested host is not whitelisted in dbms.browser.remote_content_hostname_whitelist."}]})  
+            q.reject({page: url, contents: '', is_remote: is_remote, errors: [{code: "0", message: "Requested host is not whitelisted in dbms.browser.remote_content_hostname_whitelist."}]})
             return q.promise
           $http.get(url)
           .then(
@@ -350,11 +350,38 @@ angular.module('neo4jApp')
     #       q.promise
     #   ]
 
+    # Metadata handler
+    FrameProvider.interpreters.push
+      type: 'metadata'
+      templateUrl: 'views/frame-meta.html'
+      matches: "#{cmdchar}metadata"
+      exec: ['$http', 'CypherGraphModel', ($http, CypherGraphModel) ->
+# Return the function that handles the input
+        (input, q) ->
+
+          $http.get("http://localhost:7474/meta/graph")
+          .then(
+            (res) ->
+              q.resolve({
+                graph: extractGraphModel(res.data, CypherGraphModel)
+              })
+          ,
+            (r)->
+              console.log('Im going to reject')
+              q.reject(r)
+
+          )
+          q.promise
+    ]
+
+
     extractGraphModel = (response, CypherGraphModel) ->
+      console.log(response)
       graph = new neo.models.Graph()
       graph.addNodes(response.nodes.map(CypherGraphModel.convertNode()))
       graph.addRelationships(response.relationships.map(CypherGraphModel.convertRelationship(graph)))
       graph
+
 
     # Cypher handler
     FrameProvider.interpreters.push
@@ -402,6 +429,8 @@ angular.module('neo4jApp')
           q.promise.reject = q.reject
           q.promise
       ]
+
+
 
     # Fallback interpretor
     # offer some advice
