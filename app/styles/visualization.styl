@@ -18,6 +18,12 @@ marker
   fill: #D8DADC
 
 text
+  -webkit-touch-callout: none
+  -webkit-user-select: none
+  -khtml-user-select: none
+  -moz-user-select: none
+  -ms-user-select: none
+  user-select: none
   .faded
     fill: #333
 
@@ -50,5 +56,48 @@ text
     .overlay
       opacity: .3
 
-.outline, .ring
+.outline, .ring, .context-menu-item
   cursor: pointer
+
+.zoom-holder
+  position absolute
+  bottom: 38px
+  right: 0
+  padding: 6px 6px 0 6px
+  border-left: #e6e9ef solid 1px
+  border-top: #e6e9ef solid 1px
+  background: #fff
+  button
+    display: list-item
+    font-size: 2em
+    margin-bottom: 10px
+    border: none
+    color: #9b9da2
+    background: transparent
+    border-color: black
+    &:hover
+      color:black
+    &.faded
+      opacity: .3
+      cursor: auto
+      &:hover
+        color: #9b9da2
+
+.remove_node .expand_node
+  cursor: pointer
+  &:hover
+    border: 2px black solid
+
+.context-menu-item
+  &:hover
+    fill: #b9b9b9
+    font-size: 14px
+path.context-menu-item
+  stroke-width: 2px
+  fill: #d2d5da
+
+text.context-menu-item
+  fill: #fff
+  text-anchor: middle
+  pointer-events: none
+  font-size: 14px

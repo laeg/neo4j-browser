@@ -1,5 +1,5 @@
 ###!
-Copyright (c) 2002-2015 "Neo Technology,"
+Copyright (c) 2002-2016 "Neo Technology,"
 Network Engine for Objects in Lund AB [http://neotechnology.com]
 
 This file is part of Neo4j.
@@ -49,7 +49,7 @@ neo.utils.clickHandler = ->
             ->
               event.click e.target.__data__
               wait = null
-          )(d3.event), 250)
+          )(d3.event), 100)
 
   event = d3.dispatch("click", "dblclick")
   d3.rebind cc, event, "on"

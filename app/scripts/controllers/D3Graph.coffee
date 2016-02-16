@@ -1,5 +1,5 @@
 ###!
-Copyright (c) 2002-2015 "Neo Technology,"
+Copyright (c) 2002-2016 "Neo Technology,"
 Network Engine for Objects in Lund AB [http://neotechnology.com]
 
 This file is part of Neo4j.
@@ -29,11 +29,12 @@ angular.module('neo4jApp.controllers')
     '$rootScope'
     '$scope'
     '$interval'
+    '$timeout'
     'CircularLayout'
     'GraphExplorer'
     'GraphStyle'
-    'CypherGraphModel'
-    ($attrs, $element, $parse, $window, $rootScope, $scope, $interval, CircularLayout, GraphExplorer, GraphStyle, CypherGraphModel) ->
+    'Editor'
+    ($attrs, $element, $parse, $window, $rootScope, $scope, $interval, $timeout, CircularLayout, GraphExplorer, GraphStyle, Editor) ->
       graphView = null
       @getGraphView = -> return graphView
 
@@ -45,7 +46,7 @@ angular.module('neo4jApp.controllers')
         (item) ->
           if $attrs[attribute]
             exp = $parse($attrs[attribute])
-            $scope.$apply(->exp($scope, {'$item': item }))
+            $scope.$applyAsync( ->exp($scope, {'$item': item }))
 
       itemMouseOver = attributeHandlerFactory('onItemMouseOver')
       itemMouseOut = attributeHandlerFactory('onItemMouseOut')
@@ -69,6 +70,10 @@ angular.module('neo4jApp.controllers')
 
       $rootScope.$on 'layout.changed', (-> graphView?.resize())
 
+      $rootScope.$on 'close.contextMenu', (->
+        toggleSelection(selectedItem)
+      )
+
       $scope.$watch 'displayInternalRelationships', (displayInternalRelationships) ->
         $rootScope.stickyDisplayInternalRelationships = displayInternalRelationships
         return unless graphView
@@ -80,7 +85,25 @@ angular.module('neo4jApp.controllers')
           graphView.graph.pruneInternalRelationships()
           graphView.update()
 
+      nodeClicked = (d) ->
+        d.fixed = yes
+        toggleSelection(d)
+
       initGraphView = (graph) ->
+
+        getNodeNeigbours = (d) ->
+          GraphExplorer.exploreNeighbours(d, graph, $scope.displayInternalRelationships)
+          .then(
+            # Success
+            (neighboursResult) =>
+              checkLimitsReached neighboursResult
+              linkDistance = 60
+              CircularLayout.layout(graph.nodes(), d, linkDistance)
+              d.expanded = yes
+              graphView.update()
+          )
+
+        checkMaxNodesReached graph
         graphView = new neo.graphView($element[0], measureSize, graph, GraphStyle)
 
         $scope.style = GraphStyle.rules
@@ -91,30 +114,44 @@ angular.module('neo4jApp.controllers')
 
         graphView
         .on('nodeClicked', (d) ->
-          d.fixed = yes
+          unless d.contextMenuEvent
+            nodeClicked d
+          d.contextMenuEvent = no
+        )
+        .on('nodeClose', (d) ->
+          d.contextMenuEvent = yes
+          GraphExplorer.removeNodesAndRelationships d, graph
           toggleSelection(d)
         )
-        .on('nodeDblClicked', (d) ->
+        .on('nodeUnlock', (d) ->
+          d.contextMenuEvent = yes
+          d.fixed = no
+          toggleSelection(null)
+        )
+        .on('nodeExpand', (d) ->
+          d.contextMenuEvent = yes
+          toggleSelection null
+          d.minified = no
           return if d.expanded
-          GraphExplorer.exploreNeighbours(d, graph, $scope.displayInternalRelationships)
-          .then(
-              # Success
-            (neighboursResult) =>
-              checkLimitsReached neighboursResult
-              linkDistance = 60
-              CircularLayout.layout(graph.nodes(), d, linkDistance)
-              d.expanded = yes
-              graphView.update()
-          )
+          getNodeNeigbours(d)
           # New in Angular 1.1.5
           # https://github.com/angular/angular.js/issues/2371
           $rootScope.$apply() unless $rootScope.$$phase
+        )
+        .on('deleteNode', (d) ->
+          Editor.setContent "MATCH (n) WHERE id(n) = " + d.id + " DETACH DELETE n"
+          $scope.focusEditor()
+        ).on('editNode', (d) ->
+          Editor.setContent "MATCH (n) WHERE id(n) = " + d.id + " RETURN n"
+          $scope.focusEditor()
         )
         .on('relationshipClicked', (d) ->
           toggleSelection(d)
         )
         .on('nodeMouseOver', itemMouseOver)
         .on('nodeMouseOut', itemMouseOut)
+        .on('menuMouseOver', itemMouseOver)
+        .on('menuMouseOut', itemMouseOut)
         .on('nodeDragToggle', nodeDragToggle)
         .on('relMouseOver', itemMouseOver)
         .on('relMouseOut', itemMouseOut)
@@ -148,7 +185,10 @@ angular.module('neo4jApp.controllers')
 
       checkLimitsReached = (result) ->
         if result.neighbourSize > result.neighbourDisplayedSize
-          $scope.$emit 'graph:max_neighbour_limit', result
+          return $scope.$emit 'graph:max_neighbour_limit', result
+
+      checkMaxNodesReached = (graph) ->
+        if graph.display? then $scope.$emit 'graph:initial_node_display_limit', graph.display
 
       return @
   ])

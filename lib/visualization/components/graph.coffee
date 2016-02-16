@@ -1,5 +1,5 @@
 ###!
-Copyright (c) 2002-2015 "Neo Technology,"
+Copyright (c) 2002-2016 "Neo Technology,"
 Network Engine for Objects in Lund AB [http://neotechnology.com]
 
 This file is part of Neo4j.
@@ -64,6 +64,28 @@ class neo.models.Graph
         @_nodes.push(node)
     @
 
+  removeNode: (node) =>
+    if @findNode(node.id)?
+      delete @nodeMap[node.id]
+      @_nodes.splice(@_nodes.indexOf(node), 1)
+    @
+
+  updateNode: (node) =>
+    if @findNode(node.id)?
+      @removeNode node
+      node.expanded = false
+      node.minified = true
+      @addNodes [node]
+    @
+
+  removeConnectedRelationships: (node) =>
+    for r in @findAllRelationshipToNode node
+      @updateNode r.source
+      @updateNode r.target
+      @_relationships.splice(@_relationships.indexOf(r), 1)
+      delete @relationshipMap[r.id]
+    @
+
   addRelationships: (relationships) =>
     for relationship in relationships
       existingRelationship = @findRelationship(relationship.id)
@@ -101,3 +123,7 @@ class neo.models.Graph
       )
 
   findRelationship: (id) => @relationshipMap[id]
+
+  findAllRelationshipToNode: (node) =>
+    @_relationships
+      .filter((relationship) -> relationship.source.id is node.id or relationship.target.id is node.id)

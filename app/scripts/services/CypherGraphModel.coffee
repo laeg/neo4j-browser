@@ -1,5 +1,5 @@
 ###!
-Copyright (c) 2002-2015 "Neo Technology,"
+Copyright (c) 2002-2016 "Neo Technology,"
 Network Engine for Objects in Lund AB [http://neotechnology.com]
 
 This file is part of Neo4j.
@@ -28,10 +28,12 @@ angular.module('neo4jApp.services')
 
     @convertNode = () ->
       (node) ->
+        return false if node.deleted
         new neo.models.Node(node.id, node.labels, node.properties)
 
     @convertRelationship = (graph) ->
       (relationship) ->
+        return false if relationship.deleted
         source = graph.findNode(relationship.startNode) or throw malformed()
         target = graph.findNode(relationship.endNode) or throw malformed()
         new neo.models.Relationship(relationship.id, source, target, relationship.type, relationship.properties)

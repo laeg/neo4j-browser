@@ -1,5 +1,5 @@
 ###!
-Copyright (c) 2002-2015 "Neo Technology,"
+Copyright (c) 2002-2016 "Neo Technology,"
 Network Engine for Objects in Lund AB [http://neotechnology.com]
 
 This file is part of Neo4j.
@@ -31,6 +31,7 @@ angular.module('neo4jApp.services')
         svg.node().appendChild($(this).clone().get(0))
       )
       svg.selectAll('.overlay, .ring').remove()
+      svg.selectAll('.context-menu-item').remove()
       svg.selectAll('text').attr('font-family', 'sans-serif')
       svg.attr('width', dimensions.width)
       svg.attr('height', dimensions.height)

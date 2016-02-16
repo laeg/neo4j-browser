@@ -1,5 +1,5 @@
 ###!
-Copyright (c) 2002-2015 "Neo Technology,"
+Copyright (c) 2002-2016 "Neo Technology,"
 Network Engine for Objects in Lund AB [http://neotechnology.com]
 
 This file is part of Neo4j.
@@ -62,6 +62,12 @@ angular.module('neo4jApp.controllers')
     msg += "due to browser config maxNeighbours."
     fn = ->
       Editor.setContent "#{Settings.cmdchar}config maxNeighbours: #{result.neighbourDisplayedSize}"
+    addNotification 'default', msg, fn, 10000
+
+  $scope.$on 'frame.notif.initial_node_display_limit', (event, result) ->
+    msg = "Showing #{result.initialNodeDisplay} of #{result.nodeCount} nodes. Click to adjust initialNodeDisplay nodes."
+    fn = ->
+      Editor.setContent "#{Settings.cmdchar}config initialNodeDisplay: #{result.initialNodeDisplay}"
     addNotification 'default', msg, fn, 10000
 
 ]

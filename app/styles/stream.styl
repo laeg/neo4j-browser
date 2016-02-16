@@ -15,7 +15,7 @@
 
   .frame
     overflow: hidden
-
+  
     .btn.btn-small
       background: #FFF
 
@@ -191,6 +191,13 @@
             min-height: (frame-min-height - middlebar-height)
             overflow: auto
             background: #fff
+          &.ascii-result-table
+            article
+              height: (frame-result-height - middlebar-height)
+              .ascii-table
+                overflow: visible
+                word-wrap: normal
+                background: none
 
         .view-result-plan
           background-color: #F9FBFD
@@ -289,6 +296,49 @@
         height: 39px
         line-height: 39px
 
+.frame-slider-wrapper
+  position: absolute
+  top: 8px
+  right: 20px
+  width: 225px
+  span
+    color: #9b9da2
+    text-transform: uppercase
+    font-weight: bold
+    font-size: 11px
+  .frame-slider
+    position: absolute
+    top: 4px
+    right: 0
+    width: 100px
+    input[type="range"]
+      -webkit-appearance: none
+      outline: none
+      -webkit-tap-highlight-color: rgba(255, 255, 255, 0)
+      background: #ddd
+      border-radius: 14px
+      padding: 1px 2px
+      width: 100%
+      height: 8px
+      margin-top: 3px
+      &::-moz-range-track
+        border: inherit
+        background: transparent
+      &::-ms-track
+        border: inherit
+        color: transparent
+        background: transparent
+      &::-ms-fill-lower, &::-ms-fill-upper
+        background: transparent
+      &::-ms-tooltip
+        display: none    
+      &::-webkit-slider-thumb
+        -webkit-appearance: none
+        slider-thumb()
+      &::-moz-range-thumb
+        slider-thumb()
+      &::-ms-thumb
+        slider-thumb()
 .frame-notifications
   width: 30%
   max-width: 355px

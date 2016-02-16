@@ -1,5 +1,5 @@
 ###!
-Copyright (c) 2002-2015 "Neo Technology,"
+Copyright (c) 2002-2016 "Neo Technology,"
 Network Engine for Objects in Lund AB [http://neotechnology.com]
 
 This file is part of Neo4j.
@@ -26,6 +26,7 @@ angular.module('neo4jApp.services')
     (AuthDataService) ->
       interceptor =
         request: (config) ->
+          config.headers['X-Ajax-Browser-Auth'] = true
           isLocalRequest = yes
           if /^https?:/.test config.url
             url = document.location.origin || window.location.protocol + "//" + window.location.host

@@ -1,5 +1,5 @@
 ###!
-Copyright (c) 2002-2015 "Neo Technology,"
+Copyright (c) 2002-2016 "Neo Technology,"
 Network Engine for Objects in Lund AB [http://neotechnology.com]
 
 This file is part of Neo4j.
@@ -174,7 +174,7 @@ module.exports = (grunt) ->
             '<%= yeoman.lib %>/visualization/neod3.coffee'
             '<%= yeoman.lib %>/visualization/components/*.coffee'
             '<%= yeoman.lib %>/visualization/utils/*.coffee'
-            '<%= yeoman.lib %>/visualization/init.coffee'
+            '<%= yeoman.lib %>/visualization/renders/*.coffee'
           ]
         ]
       lib:

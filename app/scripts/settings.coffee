@@ -1,5 +1,5 @@
 ###!
-Copyright (c) 2002-2015 "Neo Technology,"
+Copyright (c) 2002-2016 "Neo Technology,"
 Network Engine for Objects in Lund AB [http://neotechnology.com]
 
 This file is part of Neo4j.
@@ -39,6 +39,7 @@ angular.module('neo4jApp.settings', ['neo4jApp.utils'])
     maxFrames: 50
     maxHistory: 100
     maxNeighbours: 100
+    initialNodeDisplay: 300
     maxRows: 1000
     filemode: false
     maxRawSize: 5000 # bytes

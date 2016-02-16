@@ -23,6 +23,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 do ->
   noop = ->
 
+  nodeRingStrokeSize = 8
+
   nodeOutline = new neo.Renderer(
     onGraphChange: (selection, viz) ->
       circles = selection.selectAll('circle.outline').data((node) -> [node])
@@ -73,7 +75,7 @@ do ->
       .attr
         cx: 0
         cy: 0
-        'stroke-width': '8px'
+        'stroke-width': nodeRingStrokeSize + 'px'
 
       circles
       .attr

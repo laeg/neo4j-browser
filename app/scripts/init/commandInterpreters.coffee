@@ -1,5 +1,5 @@
 ###!
-Copyright (c) 2002-2015 "Neo Technology,"
+Copyright (c) 2002-2016 "Neo Technology,"
 Network Engine for Objects in Lund AB [http://neotechnology.com]
 
 This file is part of Neo4j.
@@ -378,8 +378,19 @@ angular.module('neo4jApp')
     extractGraphModel = (response, CypherGraphModel) ->
       console.log(response)
       graph = new neo.models.Graph()
-      graph.addNodes(response.nodes.map(CypherGraphModel.convertNode()))
-      graph.addRelationships(response.relationships.map(CypherGraphModel.convertRelationship(graph)))
+
+      if response.size > Settings.initialNodeDisplay
+        response.nodes = response.nodes.slice(0, Settings.initialNodeDisplay)
+        graph.display =
+          initialNodeDisplay: Settings.initialNodeDisplay
+          nodeCount: response.size
+
+      graph.addNodes(response.nodes
+        .map(CypherGraphModel.convertNode())
+        .filter((node)-> return node))
+      graph.addRelationships(response.relationships
+        .map(CypherGraphModel.convertRelationship(graph))
+        .filter((rel)-> return rel))
       graph
 
 
